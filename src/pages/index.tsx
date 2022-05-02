@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { writeFileFS } from "../utils";
 import { PageTabs } from "../components";
 import { SaveState, useAppContext } from "../context";
@@ -19,7 +19,7 @@ export const MainPage = () => {
     state: { pending, error, tabs, activeTab },
     dispatch,
   } = useAppContext();
-
+  console.log("IN main page ", activeTab);
   const draggingItem = useRef<any>();
   const dragOverItem = useRef<any>();
 
@@ -68,12 +68,7 @@ export const MainPage = () => {
     setActiveTabAction(dispatch)(index);
   };
 
-  const onFileOpen = async (event: IpcRendererEvent, args: any) => {
-    // const newTabIndex = tabs.length;
-    // handleAddTab();
-
-    // readFileFS(args[0], newTabIndex);
-
+  const onFileOpen = async (event: IpcRendererEvent, args: string[]) => {
     const path = args[0];
     const pathsArray: string[] = path.split("/");
     const fileName = pathsArray[pathsArray.length - 1].split(".")[0];
@@ -82,7 +77,7 @@ export const MainPage = () => {
 
   const onFileSaveAs = async (event: IpcRendererEvent, path: string) => {
     console.log("path ", path);
-    writeFileAction(dispatch)(path, tabs[activeTab].content);
+    await writeFileAction(dispatch)(path, tabs[activeTab].content);
 
     const pathsArray: string[] = path.split("/");
     const fileName = pathsArray[pathsArray.length - 1].split(".")[0];
@@ -90,13 +85,15 @@ export const MainPage = () => {
   };
 
   const onFileSave = async (event: IpcRendererEvent) => {
-    console.log(tabs);
     const currentTab = tabs[activeTab];
 
     if (currentTab.filePath) {
       writeFileAction(dispatch)(currentTab.filePath, tabs[activeTab].content);
     } else {
-      console.log("current file doesnt have a path, so open the save as ");
+      console.log(
+        "current file doesnt have a path, so open the save as ",
+        activeTab
+      );
       ipcRenderer.send("OPEN_SAVE_AS_DIALOG");
     }
   };
@@ -121,13 +118,13 @@ export const MainPage = () => {
     ipcRenderer.on("FILE_OPEN", onFileOpen);
     ipcRenderer.on("FILE_SAVE", onFileSave);
     ipcRenderer.on("FILE_SAVE_AS", onFileSaveAs);
-    () => {
+    return () => {
       ipcRenderer.off("DIRTY_TAB_DIALOG_ANSWER", handleDirtyTabDialogAnswer);
       ipcRenderer.off("FILE_OPEN", onFileOpen);
       ipcRenderer.off("FILE_SAVE", onFileSave);
       ipcRenderer.off("FILE_SAVE_AS", onFileSaveAs);
     };
-  }, []);
+  }, [tabs, activeTab]);
 
   return (
     <>

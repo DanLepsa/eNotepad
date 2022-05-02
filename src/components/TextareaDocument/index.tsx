@@ -6,7 +6,7 @@ import { useAppContext } from "../../context/state";
 
 export interface TextareaDocumentProps {
   documentId: number;
-  content: any;
+  content: string;
 }
 
 export const TextareaDocument = ({

@@ -53,7 +53,6 @@ export const openFileAction =
   async (filePath: string, fileName: string) => {
     try {
       const fileContent = await openFileFS(filePath);
-      console.log("file contnet ", fileContent);
 
       dispatch({
         type: ActionTypes.OPEN_FILE,
@@ -72,8 +71,7 @@ export const writeFileAction =
   (dispatch: Dispatch<Action>) =>
   async (filePath: string, fileContent: string) => {
     try {
-      const result = await writeFileFS(filePath, fileContent);
-      console.log("file contnet ", result);
+      await writeFileFS(filePath, fileContent);
 
       dispatch({
         type: ActionTypes.WRITE_FILE,

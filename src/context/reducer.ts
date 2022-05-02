@@ -34,10 +34,9 @@ export const initialState: AppState = {
 export const reducer = (state: AppState, action: Action) => {
   switch (action.type) {
     case ActionTypes.SET_ACTIVE_TAB: {
-      console.log("set active tab", action.payload);
       return {
         ...state,
-        activeTab: action.payload,
+        activeTab: action.payload as number,
       };
     }
 
@@ -57,11 +56,10 @@ export const reducer = (state: AppState, action: Action) => {
       oldTabs.splice(currentIndex, 1);
 
       if (!oldTabs.length) {
-        oldTabs = Object.assign([], [emptyTab]);
+        oldTabs = [emptyTab];
         currentIndex = 0;
       } else {
-        console.log("what ??? ", state.tabs[currentIndex], " ", currentIndex);
-        if (state.tabs[currentIndex]) {
+        if (!oldTabs[currentIndex]) {
           currentIndex = currentIndex - 1;
         }
       }
