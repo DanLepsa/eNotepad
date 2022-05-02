@@ -1,14 +1,12 @@
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/tabs";
-import { PlusIcon, XIcon } from "@primer/octicons-react";
+import { DotFillIcon, PlusIcon, XIcon } from "@primer/octicons-react";
 import React from "react";
 import { TextareaDocument } from "../TextareaDocument";
 
 import "./styles.css";
+import { TabData, SaveState } from "../../context/state";
 
-export interface TabData {
-  label: string;
-  content: string;
-}
+const { ipcRenderer } = window.require("electron");
 
 export interface PageTabsProps {
   data: TabData[];
@@ -35,8 +33,12 @@ export const PageTabs = ({
   handleDragStart,
   handleDragEnter,
 }: PageTabsProps) => {
-  const removeTab = (index: number) => (e: any) => {
-    handleRemoveTab(index);
+  const removeTab = (index: number, isDirty: boolean) => async (e: any) => {
+    if (isDirty) {
+      ipcRenderer.send("DIRTY_TAB_DIALOG_QUESTION", { tabIndex: index });
+    } else {
+      handleRemoveTab(index);
+    }
   };
 
   return (
@@ -75,8 +77,11 @@ export const PageTabs = ({
               }}
             >
               {tab.label}
-              <div onClick={removeTab(index)} className={"removeTabButton"}>
-                <XIcon size={16} />
+              <div
+                onClick={removeTab(index, tab.isDirty)}
+                className={"removeTabButton"}
+              >
+                {tab.isDirty ? <DotFillIcon size={16} /> : <XIcon size={16} />}
               </div>
             </Tab>
           </div>

@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from "react";
 
 import "./style.css";
+import { updateTextareaAction } from "../../context/actions";
+import { useAppContext } from "../../context/state";
 
 export interface TextareaDocumentProps {
   documentId: number;
@@ -11,6 +13,11 @@ export const TextareaDocument = ({
   documentId,
   content,
 }: TextareaDocumentProps) => {
+  const {
+    state: { pending, error },
+    dispatch,
+  } = useAppContext();
+
   const textareaRef = useRef<HTMLTextAreaElement>();
   const lineCounterRef = useRef<HTMLTextAreaElement>();
 
@@ -38,6 +45,9 @@ export const TextareaDocument = ({
       lineCounter.value = outarr.join("\n");
     }
     lineCountCache = lineCount;
+
+    // update app state after on input
+    updateTextareaAction(dispatch)(documentId, textareaRef.current.value);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
