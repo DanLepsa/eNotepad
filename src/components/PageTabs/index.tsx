@@ -1,10 +1,11 @@
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/tabs";
 import { DotFillIcon, PlusIcon, XIcon } from "@primer/octicons-react";
-import React from "react";
+import React, { useRef } from "react";
+
+import { TabData } from "../../context/state";
 import { TextareaDocument } from "../TextareaDocument";
 
 import "./styles.css";
-import { TabData, SaveState } from "../../context/state";
 
 const { ipcRenderer } = window.require("electron");
 
@@ -33,6 +34,8 @@ export const PageTabs = ({
   handleDragStart,
   handleDragEnter,
 }: PageTabsProps) => {
+  const tabListRef = useRef<HTMLElement>();
+
   const removeTab = (index: number, isDirty: boolean) => async (e: any) => {
     if (isDirty) {
       ipcRenderer.send("DIRTY_TAB_DIALOG_QUESTION", { tabIndex: index });
@@ -41,32 +44,54 @@ export const PageTabs = ({
     }
   };
 
+  const handleOnClickTab = (e: React.MouseEvent<HTMLElement>) => {
+    (e.target as HTMLElement).scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+      inline: "center",
+    });
+  };
+
+  const handleOnWheel = (e: React.WheelEvent<HTMLElement>) => {
+    tabListRef.current.scrollLeft += e.deltaY;
+  };
+
   return (
     <Tabs
       index={activeTab}
       onChange={handleTabsChange}
       variant="enclosed-colored"
-      colorScheme={"orange"}
+      background={"#3e3d32"}
     >
-      <TabList background={"#8a8a8a"} paddingLeft={"2.5rem"} paddingTop={"2px"}>
+      <TabList
+        ref={tabListRef}
+        onWheel={handleOnWheel}
+        background={"#3e3d32"}
+        marginLeft={"2.5rem"}
+        paddingTop={"6px"}
+        overflowY={"hidden"}
+        overflowX={"auto"}
+        sx={{
+          "::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
+      >
         {data.map((tab, index) => (
-          <div
-            key={index}
-            style={{
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-              overflow: activeTab === index ? "visible" : "hidden",
-            }}
-          >
+          <div key={index} className={"tabWrapper"}>
             <Tab
+              flexShrink={0}
               key={index}
               draggable={true}
+              onClick={handleOnClickTab}
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={(e) => e.preventDefault()}
               onDragEnter={(e) => handleDragEnter(e, index)}
-              background={"#9d9d9d"}
+              className="tab"
+              color={"#d9d9d9"}
+              background={"#787575"}
               _selected={{
-                color: "white",
+                color: "#fff",
                 bg: "#272822",
               }}
               style={{
@@ -74,16 +99,19 @@ export const PageTabs = ({
                 marginRight: "2px",
                 borderColor: "#272822",
                 boxShadow: "none",
+                paddingRight: "40px",
+                width: "100%",
               }}
             >
-              {tab.label}
-              <div
-                onClick={removeTab(index, tab.isDirty)}
-                className={"removeTabButton"}
-              >
-                {tab.isDirty ? <DotFillIcon size={16} /> : <XIcon size={16} />}
-              </div>
+              <span>{tab.label}</span>
             </Tab>
+            <div
+              onClick={removeTab(index, tab.isDirty)}
+              className={"removeTabButton"}
+              style={{ color: activeTab === index ? "#fff" : "#d9d9d9" }}
+            >
+              {tab.isDirty ? <DotFillIcon size={16} /> : <XIcon size={16} />}
+            </div>
           </div>
         ))}
 

@@ -29,7 +29,6 @@
   background-color: #d8d8d8;
   position: absolute;
   width: 2.5rem;
-  /* Determine appearance of line counter */
   background-color: #3e3d32;
   border-color: #3e3d32;
   color: #928869;
@@ -38,8 +37,9 @@
 .codeEditor {
   padding-left: calc(2.5rem + 5px);
   width: 100%;
-  /* Determine appearance of code editor */
   background-color: #272822;
   border-color: #272822;
   color: #ffffff;
+  overflow-x: auto;
+  white-space: nowrap;
 }

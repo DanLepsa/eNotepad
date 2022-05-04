@@ -1,13 +1,15 @@
 .removeTabButton {
   cursor: pointer;
-  margin-left: 12px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
 .addTabContainer {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: flex-end;
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  color: #fff;
 }
 
 .addTabButton {
@@ -18,4 +20,13 @@
 
 .tabPanel {
   height: calc(100vh - 35.5px);
+}
+
+.tabWrapper {
+  position: relative;
+  margin-right: 1px;
+}
+
+.tabWrapper:first-child {
+  margin-left: 1px;
 }

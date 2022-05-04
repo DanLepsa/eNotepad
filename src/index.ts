@@ -117,7 +117,6 @@ const setMainMenu = (mainWindow: BrowserWindow) => {
               .showSaveDialog(mainWindow)
               .then((fileObj) => {
                 if (!fileObj.canceled) {
-                  console.log("here??", fileObj);
                   mainWindow.webContents.send("FILE_SAVE_AS", fileObj.filePath);
                 }
               })
@@ -182,8 +181,6 @@ const setMainMenu = (mainWindow: BrowserWindow) => {
 const handleEvents = (mainWindow: BrowserWindow) => {
   // >> Treat dialog events here
   ipcMain.on("DIRTY_TAB_DIALOG_QUESTION", (event, args) => {
-    console.log("received aa ", args);
-
     const options = {
       type: "question",
       buttons: ["Cancel", "Save", "Don't Save"],
@@ -203,12 +200,10 @@ const handleEvents = (mainWindow: BrowserWindow) => {
 
   ipcMain.on("OPEN_SAVE_AS_DIALOG", (event, args) => {
     dialog
-      .showOpenDialog(mainWindow, {
-        properties: ["openFile"],
-      })
+      .showSaveDialog(mainWindow)
       .then((fileObj) => {
         if (!fileObj.canceled) {
-          mainWindow.webContents.send("FILE_OPEN", fileObj.filePaths);
+          mainWindow.webContents.send("FILE_SAVE_AS", fileObj.filePath);
         }
       })
       .catch((err) => {

@@ -29,7 +29,25 @@ export const TextareaDocument = ({
       lineCounter.scrollTop = codeEditor.scrollTop;
       lineCounter.scrollLeft = codeEditor.scrollLeft;
     });
+
+    computeLineCounter();
   }, []);
+
+  const computeLineCounter = () => {
+    const lineCounter = lineCounterRef.current;
+    const codeEditor = textareaRef.current;
+    let lineCountCache = 0;
+
+    const lineCount = codeEditor.value.split("\n").length;
+    const outarr = [];
+    if (lineCountCache != lineCount) {
+      for (let x = 0; x < lineCount; x++) {
+        outarr[x] = x + 1 + ".";
+      }
+      lineCounter.value = outarr.join("\n");
+    }
+    lineCountCache = lineCount;
+  };
 
   const handleOnInput = () => {
     const lineCounter = lineCounterRef.current;
@@ -67,9 +85,8 @@ export const TextareaDocument = ({
         .reverse()
         .join("");
       const indexOfTab = beforeStart.indexOf("  ");
-      const indexOfNewline = beforeStart.indexOf("\n");
 
-      if (indexOfTab !== -1 && indexOfTab < indexOfNewline) {
+      if (indexOfTab != -1) {
         textareaRef.current.value =
           beforeStart
             .substring(indexOfTab + 2)
@@ -116,7 +133,7 @@ export const TextareaDocument = ({
         id={`textarea-${documentId}`}
         cols={80}
         rows={5}
-        defaultValue={content}
+        value={content}
         onInput={handleOnInput}
         onKeyDown={handleKeyDown}
         style={{ height: "100%" }}

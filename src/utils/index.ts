@@ -1,18 +1,5 @@
 const fs = window.require("fs");
 
-export const loadTextInActiveTextarea = (
-  allText: any,
-  activePageId: number
-) => {
-  console.log("all text is ", allText);
-  console.log("active page id ", activePageId);
-  const textBox = document.getElementById(
-    `textarea-${activePageId}`
-  ) as HTMLInputElement;
-
-  textBox.value = allText;
-};
-
 export const openFileFS = async (filePath: string) => {
   try {
     const data: string = await fs.promises.readFile(filePath, "utf-8");

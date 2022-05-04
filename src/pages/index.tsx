@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { writeFileFS } from "../utils";
 import { PageTabs } from "../components";
 import { SaveState, useAppContext } from "../context";
@@ -19,7 +19,7 @@ export const MainPage = () => {
     state: { pending, error, tabs, activeTab },
     dispatch,
   } = useAppContext();
-  console.log("IN main page ", activeTab);
+
   const draggingItem = useRef<any>();
   const dragOverItem = useRef<any>();
 
@@ -47,16 +47,6 @@ export const MainPage = () => {
   };
 
   const handleRemoveTab = (index: number) => {
-    // const oldTabs = [...tabs];
-    // const oldTabs = Object.assign([], tabs);
-    // console.log("old tabs", oldTabs);
-    // oldTabs.splice(index, 1);
-    // console.log("updated old tabs", oldTabs);
-    // if (!oldTabs.length) {
-    //   setTabs([...oldTabs, emptyTab]); // if it's the last tab, create an empty one
-    // } else {
-    //   setTabs(oldTabs);
-    // }
     removeTabAction(dispatch)(index);
   };
 
@@ -71,16 +61,15 @@ export const MainPage = () => {
   const onFileOpen = async (event: IpcRendererEvent, args: string[]) => {
     const path = args[0];
     const pathsArray: string[] = path.split("/");
-    const fileName = pathsArray[pathsArray.length - 1].split(".")[0];
+    const fileName = pathsArray[pathsArray.length - 1];
     openFileAction(dispatch)(path, fileName);
   };
 
   const onFileSaveAs = async (event: IpcRendererEvent, path: string) => {
-    console.log("path ", path);
     await writeFileAction(dispatch)(path, tabs[activeTab].content);
 
     const pathsArray: string[] = path.split("/");
-    const fileName = pathsArray[pathsArray.length - 1].split(".")[0];
+    const fileName = pathsArray[pathsArray.length - 1];
     setFilePathOnSaveAction(dispatch)(activeTab, path, fileName);
   };
 
@@ -90,24 +79,23 @@ export const MainPage = () => {
     if (currentTab.filePath) {
       writeFileAction(dispatch)(currentTab.filePath, tabs[activeTab].content);
     } else {
-      console.log(
-        "current file doesnt have a path, so open the save as ",
-        activeTab
-      );
       ipcRenderer.send("OPEN_SAVE_AS_DIALOG");
     }
   };
 
-  const handleDirtyTabDialogAnswer = (
+  const handleDirtyTabDialogAnswer = async (
     event: IpcRendererEvent,
     { response, tabIndex }: { response: number; tabIndex: number }
   ) => {
     if (response === 1) {
       const savedState = tabs[tabIndex].saveState;
-      savedState === SaveState.UNSAVED
-        ? ipcRenderer.send("OPEN_SAVE_AS_DIALOG")
-        : writeFileFS(tabs[tabIndex].filePath, tabs[tabIndex].content);
-      removeTabAction(dispatch)(tabIndex);
+
+      if (savedState === SaveState.UNSAVED) {
+        ipcRenderer.send("OPEN_SAVE_AS_DIALOG");
+      } else {
+        await writeFileFS(tabs[tabIndex].filePath, tabs[tabIndex].content);
+        removeTabAction(dispatch)(tabIndex);
+      }
     } else if (response === 2) {
       removeTabAction(dispatch)(tabIndex);
     }
@@ -125,6 +113,8 @@ export const MainPage = () => {
       ipcRenderer.off("FILE_SAVE_AS", onFileSaveAs);
     };
   }, [tabs, activeTab]);
+
+  console.log("active tab", activeTab);
 
   return (
     <>

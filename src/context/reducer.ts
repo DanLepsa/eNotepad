@@ -1,22 +1,6 @@
 import { AppState, SaveState, TabData } from "./state";
 import { ActionTypes, Action } from "./actions";
 
-const initialTabData: TabData[] = [
-  {
-    label: "Nigerian Jollof",
-    content: "Perhaps the greatest dish ever invented.",
-    filePath: null,
-    saveState: SaveState.UNSAVED,
-  },
-  {
-    label: "Pounded Yam & Egusi",
-    content:
-      "Perhaps the surest dish ever invented but fills the stomach more than rice.",
-    filePath: "/Users/danwork/Downloads/Untitled",
-    saveState: SaveState.UNSAVED,
-  },
-];
-
 const emptyTab: TabData = {
   label: "untitled",
   content: "",
@@ -25,7 +9,7 @@ const emptyTab: TabData = {
 };
 
 export const initialState: AppState = {
-  tabs: initialTabData,
+  tabs: [],
   activeTab: 0,
   pending: false,
   error: false,
@@ -41,33 +25,35 @@ export const reducer = (state: AppState, action: Action) => {
     }
 
     case ActionTypes.ADD_NEW_TAB: {
+      const updatedTabs = [...state.tabs, emptyTab];
+
       return {
         ...state,
-        tabs: [...state.tabs, emptyTab],
-        activeTab: state.activeTab + 1,
+        tabs: updatedTabs,
+        activeTab: updatedTabs.length - 1,
       };
     }
 
     case ActionTypes.REMOVE_TAB: {
-      // NEEDS WORK
       let oldTabs = [...state.tabs];
-      let currentIndex = action.payload;
+      const currentIndex = action.payload;
+      let newActiveTab = state.activeTab;
 
       oldTabs.splice(currentIndex, 1);
 
       if (!oldTabs.length) {
         oldTabs = [emptyTab];
-        currentIndex = 0;
+        newActiveTab = 0;
       } else {
-        if (!oldTabs[currentIndex]) {
-          currentIndex = currentIndex - 1;
+        if (!oldTabs[state.activeTab]) {
+          newActiveTab = newActiveTab - 1;
         }
       }
 
       return {
         ...state,
         tabs: oldTabs,
-        activeTab: currentIndex,
+        activeTab: newActiveTab,
       };
     }
 

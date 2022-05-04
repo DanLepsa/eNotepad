@@ -27,7 +27,6 @@ export const addNewTabAction = (dispatch: Dispatch<Action>) => () => {
 
 export const removeTabAction =
   (dispatch: Dispatch<Action>) => (tabIndex: number) => {
-    console.log("reaches here ", tabIndex);
     dispatch({ type: ActionTypes.REMOVE_TAB, payload: tabIndex });
   };
 
