@@ -24,7 +24,6 @@ export const Main = () => {
   return (
     <ThemeProvider theme={ChakraUiTheme}>
       <AppContext.Provider value={contextValue}>
-        {/* <AppContext.Provider value={{ state: appState, dispatch: appDispatch }}> */}
         <div>
           <MainPage />
         </div>

@@ -126,6 +126,7 @@ export const TextareaDocument = ({
         style={{ height: "100%" }}
       ></textarea>
       <textarea
+        spellCheck={false}
         ref={textareaRef}
         className="codeEditor"
         id={`textarea-${documentId}`}
