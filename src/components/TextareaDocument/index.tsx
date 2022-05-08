@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
 
-import "./style.css";
 import { updateTextareaAction } from "../../context/actions";
 import { useAppContext } from "../../context/state";
+
+import "./style.css";
 
 export interface TextareaDocumentProps {
   documentId: number;
@@ -13,10 +14,7 @@ export const TextareaDocument = ({
   documentId,
   content,
 }: TextareaDocumentProps) => {
-  const {
-    state: { pending, error },
-    dispatch,
-  } = useAppContext();
+  const { dispatch } = useAppContext();
 
   const textareaRef = useRef<HTMLTextAreaElement>();
   const lineCounterRef = useRef<HTMLTextAreaElement>();

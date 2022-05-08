@@ -9,7 +9,7 @@ const emptyTab: TabData = {
 };
 
 export const initialState: AppState = {
-  tabs: [],
+  tabs: [emptyTab],
   activeTab: 0,
   pending: false,
   error: false,
@@ -124,6 +124,13 @@ export const reducer = (state: AppState, action: Action) => {
 
           return tab;
         }),
+      };
+    }
+
+    case ActionTypes.SET_TABS: {
+      return {
+        ...state,
+        tabs: action.payload,
       };
     }
 

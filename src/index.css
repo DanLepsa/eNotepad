@@ -7,3 +7,21 @@ body {
 html {
   overflow: hidden;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 0px; /* fix horizontal scrollbar messing line numbering*/
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #777575;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}

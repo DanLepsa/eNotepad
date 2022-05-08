@@ -1,5 +1,7 @@
 import { Dispatch } from "react";
+
 import { openFileFS, writeFileFS } from "../utils/index";
+import { TabData } from "./state";
 
 export enum ActionTypes {
   SET_ACTIVE_TAB = "SET_ACTIVE_TAB",
@@ -9,10 +11,12 @@ export enum ActionTypes {
   SAVE_SET_FILE_PATH = "SAVE_SET_FILE_PATH",
   OPEN_FILE = "OPEN_FILE",
   WRITE_FILE = "WRITE_FILE",
+  SET_TABS = "SET_TABS",
 }
 
 export interface Action {
   type: ActionTypes;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   payload?: any;
 }
 
@@ -78,4 +82,12 @@ export const writeFileAction =
     } catch (err) {
       console.log(err);
     }
+  };
+
+export const setTabsAction =
+  (dispatch: Dispatch<Action>) => (tabs: TabData[]) => {
+    dispatch({
+      type: ActionTypes.SET_TABS,
+      payload: tabs,
+    });
   };

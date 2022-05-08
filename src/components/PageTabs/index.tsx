@@ -23,6 +23,7 @@ export interface PageTabsProps {
     e: React.DragEvent<HTMLButtonElement>,
     index: number
   ) => void;
+  handleDragEnd: (e: React.DragEvent<HTMLButtonElement>, index: number) => void;
 }
 
 export const PageTabs = ({
@@ -33,10 +34,11 @@ export const PageTabs = ({
   handleTabsChange,
   handleDragStart,
   handleDragEnter,
+  handleDragEnd,
 }: PageTabsProps) => {
   const tabListRef = useRef<HTMLElement>();
 
-  const removeTab = (index: number, isDirty: boolean) => async (e: any) => {
+  const removeTab = (index: number, isDirty: boolean) => async () => {
     if (isDirty) {
       ipcRenderer.send("DIRTY_TAB_DIALOG_QUESTION", { tabIndex: index });
     } else {
@@ -87,6 +89,7 @@ export const PageTabs = ({
               onDragStart={(e) => handleDragStart(e, index)}
               onDragOver={(e) => e.preventDefault()}
               onDragEnter={(e) => handleDragEnter(e, index)}
+              onDragEnd={(e) => handleDragEnd(e, index)}
               className="tab"
               color={"#d9d9d9"}
               background={"#787575"}

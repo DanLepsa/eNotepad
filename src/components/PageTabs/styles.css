@@ -19,14 +19,10 @@
 }
 
 .tabPanel {
-  height: calc(100vh - 35.5px);
+  height: calc(100vh - 41.5px);
 }
 
 .tabWrapper {
   position: relative;
   margin-right: 1px;
-}
-
-.tabWrapper:first-child {
-  margin-left: 1px;
 }

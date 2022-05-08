@@ -3,7 +3,6 @@ import { ThemeProvider } from "@chakra-ui/react";
 import ChakraUiTheme from "@chakra-ui/theme";
 
 import { AppContext, reducer, initialState, AppState } from "./context";
-
 import { MainPage } from "./pages";
 
 const localState: AppState = JSON.parse(localStorage.getItem("appState"));
@@ -11,7 +10,7 @@ const localState: AppState = JSON.parse(localStorage.getItem("appState"));
 export const Main = () => {
   const [appState, appDispatch] = useReducer(
     reducer,
-    localState || initialState
+    (localState?.tabs?.length && localState) || initialState
   );
 
   const contextValue = useMemo(() => {

@@ -25,7 +25,9 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV === "development") {
+    mainWindow.webContents.openDevTools();
+  }
 
   setMainMenu(mainWindow);
 
@@ -84,6 +86,14 @@ const setMainMenu = (mainWindow: BrowserWindow) => {
     {
       label: "File",
       submenu: [
+        {
+          label: "New File",
+          accelerator: "CmdOrCtrl+N",
+          click() {
+            mainWindow.webContents.send("NEW_FILE");
+          },
+        },
+        { type: "separator" },
         {
           label: "Open File",
           accelerator: "CmdOrCtrl+O",
@@ -156,15 +166,15 @@ const setMainMenu = (mainWindow: BrowserWindow) => {
     {
       label: "View",
       submenu: [
-        { role: "reload" },
-        { role: "forceReload" },
-        { role: "toggleDevTools" },
-        { type: "separator" },
+        ...(process.env.NODE_ENV === "development" && [
+          { role: "reload" },
+          { role: "forceReload" },
+          { role: "toggleDevTools" },
+          { type: "separator" },
+        ]),
         { role: "resetZoom" },
         { role: "zoomIn" },
         { role: "zoomOut" },
-        { type: "separator" },
-        { role: "togglefullscreen" },
       ],
     },
 
@@ -174,6 +184,7 @@ const setMainMenu = (mainWindow: BrowserWindow) => {
     },
   ];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const menu = Menu.buildFromTemplate(template as any);
   Menu.setApplicationMenu(menu);
 };
@@ -198,7 +209,7 @@ const handleEvents = (mainWindow: BrowserWindow) => {
     });
   });
 
-  ipcMain.on("OPEN_SAVE_AS_DIALOG", (event, args) => {
+  ipcMain.on("OPEN_SAVE_AS_DIALOG", () => {
     dialog
       .showSaveDialog(mainWindow)
       .then((fileObj) => {

@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from "react";
+import { IpcRendererEvent } from "electron";
+
 import { writeFileFS } from "../utils";
 import { PageTabs } from "../components";
-import { SaveState, useAppContext } from "../context";
+import { SaveState, TabData, useAppContext } from "../context";
 import {
   setActiveTabAction,
   addNewTabAction,
@@ -9,41 +11,55 @@ import {
   setFilePathOnSaveAction,
   writeFileAction,
   openFileAction,
+  setTabsAction,
 } from "../context/actions";
-import { IpcRendererEvent } from "electron";
 
 const { ipcRenderer } = window.require("electron");
 
 export const MainPage = () => {
   const {
-    state: { pending, error, tabs, activeTab },
+    state: { tabs, activeTab },
     dispatch,
   } = useAppContext();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const draggingItem = useRef<any>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const dragOverItem = useRef<any>();
 
   const handleDragStart = (
     e: React.DragEvent<HTMLElement>,
     position: number
   ) => {
-    //   draggingItem.current = position;
+    draggingItem.current = position;
   };
 
   const handleDragEnter = (
     e: React.DragEvent<HTMLButtonElement>,
     position: number
   ) => {
-    //   dragOverItem.current = position;
-    //   console.log((e.target as HTMLElement).innerHTML);
-    //   const listCopy = [...tabs];
-    //   console.log(draggingItem.current, dragOverItem.current);
-    //   const draggingItemContent = listCopy[draggingItem.current];
-    //   listCopy.splice(draggingItem.current, 1);
-    //   listCopy.splice(dragOverItem.current, 0, draggingItemContent);
-    //   draggingItem.current = dragOverItem.current;
-    //   dragOverItem.current = null;
-    //   setTabs(listCopy);
+    dragOverItem.current = position;
+  };
+
+  const handleDragEnd = (
+    e: React.DragEvent<HTMLButtonElement>,
+    position: number
+  ) => {
+    const listCopy = [...tabs];
+    const elementDragged = listCopy[position];
+    const draggingItemContent = listCopy[draggingItem.current];
+    listCopy.splice(draggingItem.current, 1);
+    listCopy.splice(dragOverItem.current, 0, draggingItemContent);
+    setTabs(listCopy);
+
+    const newIndex = listCopy.findIndex(
+      (value) => value.content === elementDragged.content
+    );
+    setActiveTabAction(dispatch)(newIndex);
+  };
+
+  const setTabs = (updatedTabs: TabData[]) => {
+    setTabsAction(dispatch)(updatedTabs);
   };
 
   const handleRemoveTab = (index: number) => {
@@ -102,19 +118,19 @@ export const MainPage = () => {
   };
 
   useEffect(() => {
+    ipcRenderer.on("NEW_FILE", handleAddTab);
     ipcRenderer.on("DIRTY_TAB_DIALOG_ANSWER", handleDirtyTabDialogAnswer);
     ipcRenderer.on("FILE_OPEN", onFileOpen);
     ipcRenderer.on("FILE_SAVE", onFileSave);
     ipcRenderer.on("FILE_SAVE_AS", onFileSaveAs);
     return () => {
+      ipcRenderer.off("NEW_FILE", handleAddTab);
       ipcRenderer.off("DIRTY_TAB_DIALOG_ANSWER", handleDirtyTabDialogAnswer);
       ipcRenderer.off("FILE_OPEN", onFileOpen);
       ipcRenderer.off("FILE_SAVE", onFileSave);
       ipcRenderer.off("FILE_SAVE_AS", onFileSaveAs);
     };
   }, [tabs, activeTab]);
-
-  console.log("active tab", activeTab);
 
   return (
     <>
@@ -126,6 +142,7 @@ export const MainPage = () => {
         handleTabsChange={handleTabsChange}
         handleDragStart={handleDragStart}
         handleDragEnter={handleDragEnter}
+        handleDragEnd={handleDragEnd}
       />
     </>
   );
