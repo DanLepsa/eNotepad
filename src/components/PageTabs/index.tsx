@@ -1,11 +1,13 @@
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/tabs";
-import { DotFillIcon, PlusIcon, XIcon } from "@primer/octicons-react";
+import { DotFillIcon, LogIcon, PlusIcon, XIcon } from "@primer/octicons-react";
 import React, { useRef } from "react";
 
 import { TabData } from "../../context/state";
 import { TextareaDocument } from "../TextareaDocument";
+import { DocumentTypes } from "../../types";
 
-import "./styles.css";
+import styles from "./styles.module.scss";
+import { EngineDocument } from "../EngineDocument";
 
 const { ipcRenderer } = window.require("electron");
 
@@ -24,6 +26,7 @@ export interface PageTabsProps {
     index: number
   ) => void;
   handleDragEnd: (e: React.DragEvent<HTMLButtonElement>, index: number) => void;
+  handleToggleDocumentType: (index: number) => void;
 }
 
 export const PageTabs = ({
@@ -35,6 +38,7 @@ export const PageTabs = ({
   handleDragStart,
   handleDragEnter,
   handleDragEnd,
+  handleToggleDocumentType,
 }: PageTabsProps) => {
   const tabListRef = useRef<HTMLElement>();
 
@@ -56,6 +60,10 @@ export const PageTabs = ({
 
   const handleOnWheel = (e: React.WheelEvent<HTMLElement>) => {
     tabListRef.current.scrollLeft += e.deltaY;
+  };
+
+  const toggleDocumentType = (index: number) => () => {
+    handleToggleDocumentType(index);
   };
 
   return (
@@ -80,7 +88,7 @@ export const PageTabs = ({
         }}
       >
         {data.map((tab, index) => (
-          <div key={index} className={"tabWrapper"}>
+          <div key={index} className={styles.tabWrapper}>
             <Tab
               flexShrink={0}
               key={index}
@@ -110,7 +118,7 @@ export const PageTabs = ({
             </Tab>
             <div
               onClick={removeTab(index, tab.isDirty)}
-              className={"removeTabButton"}
+              className={styles.removeTabButton}
               style={{ color: activeTab === index ? "#fff" : "#d9d9d9" }}
             >
               {tab.isDirty ? <DotFillIcon size={16} /> : <XIcon size={16} />}
@@ -118,16 +126,36 @@ export const PageTabs = ({
           </div>
         ))}
 
-        <div className="addTabContainer">
-          <div onClick={handleAddTab} className={"addTabButton"}>
+        <div className={styles.addTabContainer}>
+          <div onClick={handleAddTab} className={styles.addTabButton}>
             <PlusIcon size={16} />
           </div>
         </div>
       </TabList>
       <TabPanels>
         {data.map((tab, index) => (
-          <TabPanel key={index} padding={0} className="tabPanel">
-            <TextareaDocument documentId={index} content={tab.content} />
+          <TabPanel key={index} padding={0} className={styles.tabPanel}>
+            <div className={styles.tabContent}>
+              {tab.documentType === DocumentTypes.ENGINE ? (
+                <EngineDocument documentId={index} content={tab.content} />
+              ) : (
+                <TextareaDocument documentId={index} content={tab.content} />
+              )}
+            </div>
+            <div className={styles.tabFooter}>
+              <div
+                onClick={toggleDocumentType(index)}
+                className={styles.toggleDocumentType}
+                style={{
+                  color:
+                    tab.documentType === DocumentTypes.ENGINE
+                      ? "#0092ff"
+                      : "#fff",
+                }}
+              >
+                <LogIcon size={14} />
+              </div>
+            </div>
           </TabPanel>
         ))}
       </TabPanels>

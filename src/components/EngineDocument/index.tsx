@@ -1,31 +1,45 @@
+import CodeMirror from "@uiw/react-codemirror";
 import React, { useEffect, useRef } from "react";
+import { javascript } from "@codemirror/lang-javascript";
 
 import { updateTextareaAction } from "../../context/actions";
 import { useAppContext } from "../../context/state";
-import { TextareaDocumentProps } from "../../types";
+import { EngineDocumentProps } from "../../types";
 
 import styles from "./style.module.scss";
 
-export const TextareaDocument = ({
+export const EngineDocument = ({
   documentId,
   content,
-}: TextareaDocumentProps) => {
+}: EngineDocumentProps) => {
   const { dispatch } = useAppContext();
 
-  const textareaRef = useRef<HTMLTextAreaElement>();
+  const textareaRef = useRef<any>();
   const lineCounterRef = useRef<HTMLTextAreaElement>();
 
-  useEffect(() => {
-    const lineCounter = lineCounterRef.current;
-    const codeEditor = textareaRef.current;
+  // const { setContainer } = useCodeMirror({
+  //   container: textareaRef.current as any,
+  //   extensions: [javascript()],
+  //   value: content,
+  // });
 
-    codeEditor.addEventListener("scroll", () => {
-      lineCounter.scrollTop = codeEditor.scrollTop;
-      lineCounter.scrollLeft = codeEditor.scrollLeft;
-    });
+  // useEffect(() => {
+  //   if (textareaRef.current) {
+  //     setContainer(textareaRef.current as any);
+  //   }
+  // }, [textareaRef.current]);
 
-    computeLineCounter();
-  }, []);
+  // useEffect(() => {
+  //   const lineCounter = lineCounterRef.current;
+  //   const codeEditor = textareaRef.current;
+
+  //   codeEditor.addEventListener("scroll", () => {
+  //     lineCounter.scrollTop = codeEditor.scrollTop;
+  //     lineCounter.scrollLeft = codeEditor.scrollLeft;
+  //   });
+
+  //   // computeLineCounter();
+  // }, []);
 
   const computeLineCounter = () => {
     const lineCounter = lineCounterRef.current;
@@ -43,6 +57,10 @@ export const TextareaDocument = ({
     lineCountCache = lineCount;
   };
 
+  const handleDivOnInput = () => {
+    console.log(textareaRef.current);
+    // updateTextareaAction(dispatch)(documentId, textareaRef.current.innerHTML);
+  };
   const handleOnInput = () => {
     const lineCounter = lineCounterRef.current;
     const codeEditor = textareaRef.current;
@@ -111,28 +129,20 @@ export const TextareaDocument = ({
     }
   };
 
+  const handleChange = (value: any, viewUpdate: any) => {
+    console.log("value:", value);
+    updateTextareaAction(dispatch)(documentId, value);
+  };
+
   return (
-    <>
-      <textarea
-        className={styles.lineCounter}
-        wrap="off"
-        ref={lineCounterRef}
-        readOnly={true}
-        defaultValue={1}
-        style={{ height: "100%" }}
-      ></textarea>
-      <textarea
-        spellCheck={false}
-        ref={textareaRef}
-        className={styles.codeEditor}
-        id={`textarea-${documentId}`}
-        cols={80}
-        rows={5}
-        value={content}
-        onInput={handleOnInput}
-        onKeyDown={handleKeyDown}
-        style={{ height: "100%" }}
-      ></textarea>
-    </>
+    <CodeMirror
+      value={content}
+      className={styles.codeEditor}
+      theme={"dark"}
+      id={`textarea-${documentId}`}
+      extensions={[javascript({ jsx: true })]}
+      onChange={handleChange}
+      height={"100%"}
+    />
   );
 };

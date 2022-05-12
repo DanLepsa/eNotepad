@@ -1,11 +1,14 @@
 import { AppState, SaveState, TabData } from "./state";
 import { ActionTypes, Action } from "./actions";
 
+import { DocumentTypes } from "../types";
+
 const emptyTab: TabData = {
   label: "untitled",
   content: "",
   filePath: null,
   saveState: SaveState.UNSAVED,
+  documentType: DocumentTypes.TEXTAREA,
 };
 
 export const initialState: AppState = {
@@ -104,6 +107,7 @@ export const reducer = (state: AppState, action: Action) => {
         content: fileContent,
         filePath: filePath,
         saveState: SaveState.SAVED,
+        documentType: DocumentTypes.TEXTAREA,
       };
       return {
         ...state,
@@ -131,6 +135,25 @@ export const reducer = (state: AppState, action: Action) => {
       return {
         ...state,
         tabs: action.payload,
+      };
+    }
+
+    case ActionTypes.TOGGLE_DOCUMENT_TYPE: {
+      return {
+        ...state,
+        tabs: state.tabs.map((tab, index) => {
+          if (index === action.payload) {
+            return {
+              ...tab,
+              documentType:
+                tab.documentType === DocumentTypes.ENGINE
+                  ? DocumentTypes.TEXTAREA
+                  : DocumentTypes.ENGINE,
+            };
+          }
+
+          return tab;
+        }),
       };
     }
 

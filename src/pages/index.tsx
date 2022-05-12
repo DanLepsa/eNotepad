@@ -12,6 +12,7 @@ import {
   writeFileAction,
   openFileAction,
   setTabsAction,
+  toggleDocumentTypeAction,
 } from "../context/actions";
 
 const { ipcRenderer } = window.require("electron");
@@ -117,6 +118,10 @@ export const MainPage = () => {
     }
   };
 
+  const handleToggleDocumentType = (index: number) => {
+    toggleDocumentTypeAction(dispatch)(index);
+  };
+
   useEffect(() => {
     ipcRenderer.on("NEW_FILE", handleAddTab);
     ipcRenderer.on("DIRTY_TAB_DIALOG_ANSWER", handleDirtyTabDialogAnswer);
@@ -143,6 +148,7 @@ export const MainPage = () => {
         handleDragStart={handleDragStart}
         handleDragEnter={handleDragEnter}
         handleDragEnd={handleDragEnd}
+        handleToggleDocumentType={handleToggleDocumentType}
       />
     </>
   );
