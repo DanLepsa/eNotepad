@@ -12,6 +12,7 @@ export enum ActionTypes {
   OPEN_FILE = "OPEN_FILE",
   WRITE_FILE = "WRITE_FILE",
   SET_TABS = "SET_TABS",
+  TOGGLE_DOCUMENT_TYPE = "TOGGLE_DOCUMENT_TYPE",
 }
 
 export interface Action {
@@ -89,5 +90,13 @@ export const setTabsAction =
     dispatch({
       type: ActionTypes.SET_TABS,
       payload: tabs,
+    });
+  };
+
+export const toggleDocumentTypeAction =
+  (dispatch: Dispatch<Action>) => (tabIndex: number) => {
+    dispatch({
+      type: ActionTypes.TOGGLE_DOCUMENT_TYPE,
+      payload: tabIndex,
     });
   };

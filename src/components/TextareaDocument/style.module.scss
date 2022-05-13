@@ -2,7 +2,7 @@
 .lineCounter {
   font-family: lucida console, courier new, courier, monospace;
   margin: 0;
-  padding: 10px 0;
+  padding: 3px 0;
   height: 75vh;
   border-radius: 0;
   resize: none;
@@ -30,16 +30,18 @@
   position: absolute;
   width: 2.5rem;
   background-color: #3e3d32;
-  border-color: #3e3d32;
   color: #928869;
+  font-family: monospace;
+  padding: 3px 5px 3px 0;
 }
 
 .codeEditor {
-  padding-left: calc(2.5rem + 5px);
+  padding-left: calc(2.5rem + 3px);
   width: 100%;
   background-color: #272822;
-  border-color: #272822;
-  color: #e0e0e0;
+  border-color: transparent;
+  color: #bebebe;
   overflow-x: auto;
   white-space: nowrap;
+  font-family: monospace;
 }

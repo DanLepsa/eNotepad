@@ -1,6 +1,7 @@
 import React, { Dispatch } from "react";
 
 import { Action } from "./actions";
+import { DocumentTypes } from "../types";
 
 export enum SaveState {
   SAVED = "SAVED",
@@ -12,6 +13,7 @@ export interface TabData {
   content: string;
   filePath: string | null;
   saveState: SaveState;
+  documentType: DocumentTypes;
   isDirty?: boolean;
 }
 

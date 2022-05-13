@@ -1,0 +1,29 @@
+.codeEditor {
+  font-family: lucida console, courier new, courier, monospace;
+  margin: 0;
+  padding: 10px 0;
+  height: 75vh;
+  border-radius: 0;
+  resize: none;
+  font-size: 16px;
+  line-height: 1.2;
+  outline: none;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.codeEditor:focus-visible {
+  outline: none;
+}
+
+.codeEditor {
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #272822;
+  border-color: #272822;
+  color: #e0e0e0;
+  overflow-x: auto;
+  white-space: nowrap;
+}

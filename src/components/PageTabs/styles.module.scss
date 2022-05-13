@@ -26,3 +26,23 @@
   position: relative;
   margin-right: 1px;
 }
+
+.tabContent {
+  height: calc(100% - 20px);
+  position: relative;
+}
+
+.tabFooter {
+  height: 20px;
+  width: 100%;
+  background-color: #3e3d32;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.toggleDocumentType {
+  color: #fff;
+  cursor: pointer;
+  margin-right: 10px;
+  line-height: 16px;
+}

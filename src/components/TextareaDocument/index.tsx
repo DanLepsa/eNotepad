@@ -2,13 +2,9 @@ import React, { useEffect, useRef } from "react";
 
 import { updateTextareaAction } from "../../context/actions";
 import { useAppContext } from "../../context/state";
+import { TextareaDocumentProps } from "../../types";
 
-import "./style.css";
-
-export interface TextareaDocumentProps {
-  documentId: number;
-  content: string;
-}
+import styles from "./style.module.scss";
 
 export const TextareaDocument = ({
   documentId,
@@ -40,7 +36,7 @@ export const TextareaDocument = ({
     const outarr = [];
     if (lineCountCache != lineCount) {
       for (let x = 0; x < lineCount; x++) {
-        outarr[x] = x + 1 + ".";
+        outarr[x] = x + 1 + " ";
       }
       lineCounter.value = outarr.join("\n");
     }
@@ -56,7 +52,7 @@ export const TextareaDocument = ({
     const outarr = [];
     if (lineCountCache != lineCount) {
       for (let x = 0; x < lineCount; x++) {
-        outarr[x] = x + 1 + ".";
+        outarr[x] = x + 1 + " ";
       }
       lineCounter.value = outarr.join("\n");
     }
@@ -116,9 +112,9 @@ export const TextareaDocument = ({
   };
 
   return (
-    <div style={{ height: "100%", position: "relative" }}>
+    <>
       <textarea
-        className="lineCounter"
+        className={styles.lineCounter}
         wrap="off"
         ref={lineCounterRef}
         readOnly={true}
@@ -128,7 +124,7 @@ export const TextareaDocument = ({
       <textarea
         spellCheck={false}
         ref={textareaRef}
-        className="codeEditor"
+        className={styles.codeEditor}
         id={`textarea-${documentId}`}
         cols={80}
         rows={5}
@@ -137,6 +133,6 @@ export const TextareaDocument = ({
         onKeyDown={handleKeyDown}
         style={{ height: "100%" }}
       ></textarea>
-    </div>
+    </>
   );
 };
