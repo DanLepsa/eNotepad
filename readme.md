@@ -8,4 +8,9 @@ npm run make
 
 npm start
 
-<img width="1017" alt="Screenshot 2022-05-08 at 17 39 55" src="https://user-images.githubusercontent.com/13150682/167302362-e8f4f0e8-1c8a-4bc9-b562-79689623da31.png">
+
+# Choose between plain text, and JS highlighting:
+
+<img width="938" alt="Screenshot 2022-05-13 at 14 28 03" src="https://user-images.githubusercontent.com/13150682/168275111-673d244b-8915-465d-819e-3057673e07fb.png">
+
+<img width="943" alt="Screenshot 2022-05-13 at 14 27 52" src="https://user-images.githubusercontent.com/13150682/168275157-5bd21fbf-3d13-457f-831f-64dfc7e67db6.png">
