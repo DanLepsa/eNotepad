@@ -62,7 +62,6 @@ export const EngineDocument = ({
         backgroundColor: "#3e3d32",
         color: "#928869",
         border: "none",
-        width: "2.5rem",
       },
       ".cm-lineNumbers .cm-gutterElement": {
         padding: "0 3px 0 5.5px",
