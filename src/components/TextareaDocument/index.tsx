@@ -36,7 +36,7 @@ export const TextareaDocument = ({
     const outarr = [];
     if (lineCountCache != lineCount) {
       for (let x = 0; x < lineCount; x++) {
-        outarr[x] = x + 1 + ".";
+        outarr[x] = x + 1 + " ";
       }
       lineCounter.value = outarr.join("\n");
     }
@@ -52,7 +52,7 @@ export const TextareaDocument = ({
     const outarr = [];
     if (lineCountCache != lineCount) {
       for (let x = 0; x < lineCount; x++) {
-        outarr[x] = x + 1 + ".";
+        outarr[x] = x + 1 + " ";
       }
       lineCounter.value = outarr.join("\n");
     }
