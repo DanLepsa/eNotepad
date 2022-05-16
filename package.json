@@ -19,7 +19,8 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "icon": "./icons/icon.icns"
+        "icon": "./icons/icon.icns",
+        "extendInfo": "./fileTypes.plist"
       },
       "makers": [
         {

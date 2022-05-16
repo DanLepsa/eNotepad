@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>txt</string>
+				<string>js</string>
+				<string>ts</string>
+				<string>jsx</string>
+				<string>tsx</string>
+				<string>pk</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>electron.icns</string>
+			<key>CFBundleTypeMIMETypes</key>
+			<array>
+				<string>text/plain</string>
+				<string>text/javascript</string>
+				<string>text/typescript</string>
+				<string>text/javascriptreact</string>
+				<string>text/typescriptreact</string>
+				<string>text/plain</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Text document</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>TXT</string>
+				<string>JS</string>
+				<string>TS</string>
+				<string>JSX</string>
+				<string>TSX</string>
+				<string>PK</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+	</array>
+</dict>
+</plist>

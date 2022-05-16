@@ -157,6 +157,30 @@ export const reducer = (state: AppState, action: Action) => {
       };
     }
 
+    case ActionTypes.UPDATE_LOCAL_CONTENT_PENDING: {
+      return {
+        ...state,
+        pending: true,
+      };
+    }
+
+    case ActionTypes.UPDATE_LOCAL_CONTENT_SUCCESS: {
+      return {
+        ...state,
+        pending: false,
+        error: false,
+        tabs: action.payload,
+      };
+    }
+
+    case ActionTypes.UPDATE_LOCAL_CONTENT_ERROR: {
+      return {
+        ...state,
+        pending: false,
+        error: true,
+      };
+    }
+
     default:
       return state;
   }

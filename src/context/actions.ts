@@ -1,6 +1,6 @@
 import { Dispatch } from "react";
 
-import { openFileFS, writeFileFS } from "../utils/index";
+import { readFileFS, writeFileFS, updateLocalContent } from "../utils";
 import { TabData } from "./state";
 
 export enum ActionTypes {
@@ -13,6 +13,9 @@ export enum ActionTypes {
   WRITE_FILE = "WRITE_FILE",
   SET_TABS = "SET_TABS",
   TOGGLE_DOCUMENT_TYPE = "TOGGLE_DOCUMENT_TYPE",
+  UPDATE_LOCAL_CONTENT_PENDING = "UPDATE_LOCAL_CONTENT_PENDING",
+  UPDATE_LOCAL_CONTENT_SUCCESS = "UPDATE_LOCAL_CONTENT_SUCCESS",
+  UPDATE_LOCAL_CONTENT_ERROR = "UPDATE_LOCAL_CONTENT_ERROR",
 }
 
 export interface Action {
@@ -56,7 +59,7 @@ export const openFileAction =
   (dispatch: Dispatch<Action>) =>
   async (filePath: string, fileName: string) => {
     try {
-      const fileContent = await openFileFS(filePath);
+      const fileContent = await readFileFS(filePath);
 
       dispatch({
         type: ActionTypes.OPEN_FILE,
@@ -99,4 +102,19 @@ export const toggleDocumentTypeAction =
       type: ActionTypes.TOGGLE_DOCUMENT_TYPE,
       payload: tabIndex,
     });
+  };
+
+export const updateLocalContentAction =
+  (dispatch: Dispatch<Action>) => async (tabs: TabData[]) => {
+    dispatch({ type: ActionTypes.UPDATE_LOCAL_CONTENT_PENDING });
+
+    try {
+      const updatedTabs = await updateLocalContent(tabs);
+      dispatch({
+        type: ActionTypes.UPDATE_LOCAL_CONTENT_SUCCESS,
+        payload: updatedTabs,
+      });
+    } catch {
+      dispatch({ type: ActionTypes.UPDATE_LOCAL_CONTENT_ERROR });
+    }
   };
