@@ -75,8 +75,7 @@ export const MainPage = () => {
     setActiveTabAction(dispatch)(index);
   };
 
-  const onFileOpen = async (event: IpcRendererEvent, args: string[]) => {
-    const path = args[0];
+  const onFileOpen = async (event: IpcRendererEvent, path: string) => {
     const pathsArray: string[] = path.split("/");
     const fileName = pathsArray[pathsArray.length - 1];
     openFileAction(dispatch)(path, fileName);
