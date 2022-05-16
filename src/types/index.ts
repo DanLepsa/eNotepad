@@ -12,3 +12,8 @@ export enum DocumentTypes {
   TEXTAREA = "TEXTAREA",
   ENGINE = "ENGINE",
 }
+
+export interface TabToBeCreated {
+  content: string;
+  filePath: string;
+}

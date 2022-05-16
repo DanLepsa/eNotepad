@@ -70,6 +70,10 @@ export const EngineDocument = ({
     { dark: true }
   );
 
+  const handleDropPrevent = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
   return (
     <CodeMirror
       value={content}
@@ -79,6 +83,8 @@ export const EngineDocument = ({
       extensions={[javascript({ jsx: true })]}
       onChange={handleChange}
       height={"100%"}
+      onDrop={handleDropPrevent}
+      onDropCapture={handleDropPrevent}
     />
   );
 };

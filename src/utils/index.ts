@@ -1,6 +1,7 @@
 const fs = window.require("fs");
 
 import { TabData } from "../context";
+import { TabToBeCreated } from "../types";
 
 export const readFileFS = async (filePath: string) => {
   try {
@@ -53,6 +54,37 @@ export const updateLocalContent = async (tabs: TabData[]) => {
 
     return updatedTabs;
   } catch (err) {
-    console.log("errorrr", err);
+    console.log("error", err);
+  }
+};
+
+export const readMultipleFiles = async (
+  fileList: FileList,
+  tabs: TabData[]
+) => {
+  const readFilesPromiseList = Array.from(fileList).map(
+    async (file) => await readFileFS(file.path)
+  );
+
+  try {
+    const settledPromises = await Promise.allSettled(readFilesPromiseList);
+    const tabsToBeCreated: TabToBeCreated[] = [];
+    settledPromises.forEach((p, index) => {
+      if (p.status !== "rejected") {
+        tabsToBeCreated.push({
+          content: p.value,
+          filePath: fileList[index].path,
+        });
+      }
+    });
+
+    const tabsToBeCreatedFiltered = tabsToBeCreated.filter(
+      // filter out any files that are already opened
+      (t) => !tabs.find((tab) => tab.filePath === t.filePath)
+    );
+
+    return tabsToBeCreatedFiltered;
+  } catch (err) {
+    console.log("error", err);
   }
 };

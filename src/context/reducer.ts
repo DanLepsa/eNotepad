@@ -2,6 +2,7 @@ import { AppState, SaveState, TabData } from "./state";
 import { ActionTypes, Action } from "./actions";
 
 import { DocumentTypes } from "../types";
+import { TabToBeCreated } from "../types/index";
 
 const emptyTab: TabData = {
   label: "untitled",
@@ -112,6 +113,7 @@ export const reducer = (state: AppState, action: Action) => {
       return {
         ...state,
         tabs: [...state.tabs, newTab],
+        activeTab: state.tabs.length,
       };
     }
 
@@ -178,6 +180,28 @@ export const reducer = (state: AppState, action: Action) => {
         ...state,
         pending: false,
         error: true,
+      };
+    }
+
+    case ActionTypes.ADD_MULTIPLE_TABS: {
+      const tabsToBeCreated: TabData[] = (
+        action.payload as TabToBeCreated[]
+      ).map((t) => {
+        const pathsArray: string[] = t.filePath.split("/");
+        const fileName = pathsArray[pathsArray.length - 1];
+
+        return {
+          ...emptyTab,
+          content: t.content,
+          filePath: t.filePath,
+          label: fileName,
+        };
+      });
+      const updatedTabs = [...state.tabs, ...tabsToBeCreated];
+
+      return {
+        ...state,
+        tabs: updatedTabs,
       };
     }
 

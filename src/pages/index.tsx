@@ -4,6 +4,7 @@ import { IpcRendererEvent } from "electron";
 import { writeFileFS } from "../utils";
 import { PageTabs } from "../components";
 import { SaveState, TabData, useAppContext } from "../context";
+import { TabToBeCreated } from "../types";
 import {
   setActiveTabAction,
   addNewTabAction,
@@ -13,6 +14,7 @@ import {
   openFileAction,
   setTabsAction,
   toggleDocumentTypeAction,
+  addMultipleTabsAction,
 } from "../context/actions";
 
 const { ipcRenderer } = window.require("electron");
@@ -76,9 +78,13 @@ export const MainPage = () => {
   };
 
   const onFileOpen = async (event: IpcRendererEvent, path: string) => {
-    const pathsArray: string[] = path.split("/");
-    const fileName = pathsArray[pathsArray.length - 1];
-    openFileAction(dispatch)(path, fileName);
+    if (tabs.find((tab) => tab.filePath === path)) {
+      alert("Selected file is already opened");
+    } else {
+      const pathsArray: string[] = path.split("/");
+      const fileName = pathsArray[pathsArray.length - 1];
+      openFileAction(dispatch)(path, fileName);
+    }
   };
 
   const onFileSaveAs = async (event: IpcRendererEvent, path: string) => {
@@ -121,6 +127,10 @@ export const MainPage = () => {
     toggleDocumentTypeAction(dispatch)(index);
   };
 
+  const handleAddMultipleTabs = (tabs: TabToBeCreated[]) => {
+    addMultipleTabsAction(dispatch)(tabs);
+  };
+
   useEffect(() => {
     ipcRenderer.on("NEW_FILE", handleAddTab);
     ipcRenderer.on("DIRTY_TAB_DIALOG_ANSWER", handleDirtyTabDialogAnswer);
@@ -148,6 +158,7 @@ export const MainPage = () => {
         handleDragEnter={handleDragEnter}
         handleDragEnd={handleDragEnd}
         handleToggleDocumentType={handleToggleDocumentType}
+        handleAddMultipleTabs={handleAddMultipleTabs}
       />
     </>
   );

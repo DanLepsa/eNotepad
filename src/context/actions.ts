@@ -2,6 +2,7 @@ import { Dispatch } from "react";
 
 import { readFileFS, writeFileFS, updateLocalContent } from "../utils";
 import { TabData } from "./state";
+import { TabToBeCreated } from "../types";
 
 export enum ActionTypes {
   SET_ACTIVE_TAB = "SET_ACTIVE_TAB",
@@ -16,6 +17,7 @@ export enum ActionTypes {
   UPDATE_LOCAL_CONTENT_PENDING = "UPDATE_LOCAL_CONTENT_PENDING",
   UPDATE_LOCAL_CONTENT_SUCCESS = "UPDATE_LOCAL_CONTENT_SUCCESS",
   UPDATE_LOCAL_CONTENT_ERROR = "UPDATE_LOCAL_CONTENT_ERROR",
+  ADD_MULTIPLE_TABS = "ADD_MULTIPLE_TABS",
 }
 
 export interface Action {
@@ -117,4 +119,9 @@ export const updateLocalContentAction =
     } catch {
       dispatch({ type: ActionTypes.UPDATE_LOCAL_CONTENT_ERROR });
     }
+  };
+
+export const addMultipleTabsAction =
+  (dispatch: Dispatch<Action>) => (tabsToBeCreated: TabToBeCreated[]) => {
+    dispatch({ type: ActionTypes.ADD_MULTIPLE_TABS, payload: tabsToBeCreated });
   };

@@ -4,10 +4,11 @@ import React, { useRef } from "react";
 
 import { TabData } from "../../context/state";
 import { TextareaDocument } from "../TextareaDocument";
-import { DocumentTypes } from "../../types";
+import { DocumentTypes, TabToBeCreated } from "../../types";
 
 import styles from "./styles.module.scss";
 import { EngineDocument } from "../EngineDocument";
+import { readMultipleFiles } from "../..//utils";
 
 const { ipcRenderer } = window.require("electron");
 
@@ -27,6 +28,7 @@ export interface PageTabsProps {
   ) => void;
   handleDragEnd: (e: React.DragEvent<HTMLButtonElement>, index: number) => void;
   handleToggleDocumentType: (index: number) => void;
+  handleAddMultipleTabs: (tabs: TabToBeCreated[]) => void;
 }
 
 export const PageTabs = ({
@@ -39,6 +41,7 @@ export const PageTabs = ({
   handleDragEnter,
   handleDragEnd,
   handleToggleDocumentType,
+  handleAddMultipleTabs,
 }: PageTabsProps) => {
   const tabListRef = useRef<HTMLElement>();
 
@@ -64,6 +67,20 @@ export const PageTabs = ({
 
   const toggleDocumentType = (index: number) => () => {
     handleToggleDocumentType(index);
+  };
+
+  const handleOnDropFile = async (e: React.DragEvent<HTMLDivElement>) => {
+    if (e.dataTransfer.files.length) {
+      try {
+        const tabsToBeCreated = await readMultipleFiles(
+          e.dataTransfer.files,
+          data
+        );
+        handleAddMultipleTabs(tabsToBeCreated);
+      } catch {
+        console.log("error reading multiple tabs");
+      }
+    }
   };
 
   return (
@@ -135,7 +152,7 @@ export const PageTabs = ({
       <TabPanels>
         {data.map((tab, index) => (
           <TabPanel key={index} padding={0} className={styles.tabPanel}>
-            <div className={styles.tabContent}>
+            <div className={styles.tabContent} onDrop={handleOnDropFile}>
               {tab.documentType === DocumentTypes.ENGINE ? (
                 <EngineDocument documentId={index} content={tab.content} />
               ) : (
