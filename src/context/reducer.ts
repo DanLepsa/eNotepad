@@ -1,8 +1,7 @@
 import { AppState, SaveState, TabData } from "./state";
 import { ActionTypes, Action } from "./actions";
 
-import { DocumentTypes } from "../types";
-import { TabToBeCreated } from "../types/index";
+import { DocumentTypes, TabToBeCreated } from "../types";
 
 const emptyTab: TabData = {
   label: "untitled",

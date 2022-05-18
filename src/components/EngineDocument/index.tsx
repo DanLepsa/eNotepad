@@ -37,6 +37,9 @@ export const EngineDocument = ({
       ".ͼb": {
         color: "#c09a0d",
       },
+      ".ͼc": {
+        color: "#7ab3f8",
+      },
       ".ͼd": {
         color: "#c8c59b",
       },

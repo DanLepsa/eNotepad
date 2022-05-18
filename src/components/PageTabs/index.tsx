@@ -83,6 +83,15 @@ export const PageTabs = ({
     }
   };
 
+  const handleOnMouseDown =
+    (index: number, isTabDirty: boolean) => (e: React.MouseEvent) => {
+      if (e.button === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+        removeTab(index, isTabDirty)();
+      }
+    };
+
   return (
     <Tabs
       index={activeTab}
@@ -115,6 +124,7 @@ export const PageTabs = ({
               onDragOver={(e) => e.preventDefault()}
               onDragEnter={(e) => handleDragEnter(e, index)}
               onDragEnd={(e) => handleDragEnd(e, index)}
+              onMouseDown={handleOnMouseDown(index, tab.isDirty)}
               className="tab"
               color={"#d9d9d9"}
               background={"#787575"}
