@@ -2,8 +2,10 @@ import { AppState, SaveState, TabData } from "./state";
 import { ActionTypes, Action } from "./actions";
 
 import { DocumentTypes, TabToBeCreated } from "../types";
+import { getNextTabId } from "../utils/";
 
 const emptyTab: TabData = {
+  tabId: 0,
   label: "untitled",
   content: "",
   filePath: null,
@@ -28,7 +30,13 @@ export const reducer = (state: AppState, action: Action) => {
     }
 
     case ActionTypes.ADD_NEW_TAB: {
-      const updatedTabs = [...state.tabs, emptyTab];
+      const updatedTabs: TabData[] = [
+        ...state.tabs,
+        {
+          ...emptyTab,
+          tabId: getNextTabId(state.tabs),
+        },
+      ];
 
       return {
         ...state,
@@ -38,24 +46,23 @@ export const reducer = (state: AppState, action: Action) => {
     }
 
     case ActionTypes.REMOVE_TAB: {
-      let oldTabs = [...state.tabs];
-      const currentIndex = action.payload;
+      let updatedTabs = [...state.tabs].filter(
+        (tab) => tab.tabId !== action.payload
+      );
       let newActiveTab = state.activeTab;
 
-      oldTabs.splice(currentIndex, 1);
-
-      if (!oldTabs.length) {
-        oldTabs = [emptyTab];
+      if (!updatedTabs.length) {
+        updatedTabs = [emptyTab];
         newActiveTab = 0;
       } else {
-        if (!oldTabs[state.activeTab]) {
+        if (!updatedTabs[state.activeTab]) {
           newActiveTab = newActiveTab - 1;
         }
       }
 
       return {
         ...state,
-        tabs: oldTabs,
+        tabs: updatedTabs,
         activeTab: newActiveTab,
       };
     }
@@ -66,7 +73,8 @@ export const reducer = (state: AppState, action: Action) => {
       return {
         ...state,
         tabs: state.tabs.map((tab, index) => {
-          if (index === tabIndex) {
+          // if (index === tabIndex) {
+          if (tab.tabId === tabIndex) {
             return {
               ...tab,
               content: content,
@@ -108,6 +116,7 @@ export const reducer = (state: AppState, action: Action) => {
         filePath: filePath,
         saveState: SaveState.SAVED,
         documentType: DocumentTypes.TEXTAREA,
+        tabId: getNextTabId(state.tabs),
       };
       return {
         ...state,
@@ -143,7 +152,7 @@ export const reducer = (state: AppState, action: Action) => {
       return {
         ...state,
         tabs: state.tabs.map((tab, index) => {
-          if (index === action.payload) {
+          if (tab.tabId === action.payload) {
             return {
               ...tab,
               documentType:
@@ -183,9 +192,10 @@ export const reducer = (state: AppState, action: Action) => {
     }
 
     case ActionTypes.ADD_MULTIPLE_TABS: {
+      const nextTabId = getNextTabId(state.tabs);
       const tabsToBeCreated: TabData[] = (
         action.payload as TabToBeCreated[]
-      ).map((t) => {
+      ).map((t, i) => {
         const pathsArray: string[] = t.filePath.split("/");
         const fileName = pathsArray[pathsArray.length - 1];
 
@@ -194,6 +204,7 @@ export const reducer = (state: AppState, action: Action) => {
           content: t.content,
           filePath: t.filePath,
           label: fileName,
+          tabId: nextTabId + i,
         };
       });
       const updatedTabs = [...state.tabs, ...tabsToBeCreated];
@@ -201,6 +212,19 @@ export const reducer = (state: AppState, action: Action) => {
       return {
         ...state,
         tabs: updatedTabs,
+      };
+    }
+
+    case ActionTypes.CHANGE_TAB_ORDER: {
+      const oldTabs = [...state.tabs];
+      const element = oldTabs.splice(action.payload.fromIndex, 1)[0];
+
+      oldTabs.splice(action.payload.toIndex, 0, element);
+
+      return {
+        ...state,
+        tabs: oldTabs,
+        activeTab: action.payload.toIndex,
       };
     }
 

@@ -18,6 +18,7 @@ export enum ActionTypes {
   UPDATE_LOCAL_CONTENT_SUCCESS = "UPDATE_LOCAL_CONTENT_SUCCESS",
   UPDATE_LOCAL_CONTENT_ERROR = "UPDATE_LOCAL_CONTENT_ERROR",
   ADD_MULTIPLE_TABS = "ADD_MULTIPLE_TABS",
+  CHANGE_TAB_ORDER = "CHANGE_TAB_ORDER",
 }
 
 export interface Action {
@@ -124,4 +125,12 @@ export const updateLocalContentAction =
 export const addMultipleTabsAction =
   (dispatch: Dispatch<Action>) => (tabsToBeCreated: TabToBeCreated[]) => {
     dispatch({ type: ActionTypes.ADD_MULTIPLE_TABS, payload: tabsToBeCreated });
+  };
+
+export const changeTabOrderAction =
+  (dispatch: Dispatch<Action>) => (fromIndex: number, toIndex: number) => {
+    dispatch({
+      type: ActionTypes.CHANGE_TAB_ORDER,
+      payload: { fromIndex, toIndex },
+    });
   };

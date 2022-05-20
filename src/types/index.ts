@@ -17,3 +17,7 @@ export interface TabToBeCreated {
   content: string;
   filePath: string;
 }
+
+export const ItemTypes = {
+  TAB: "TAB",
+};

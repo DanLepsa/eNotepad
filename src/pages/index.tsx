@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { IpcRendererEvent } from "electron";
 
 import { writeFileFS } from "../utils";
 import { PageTabs } from "../components";
-import { SaveState, TabData, useAppContext } from "../context";
+import { SaveState, useAppContext } from "../context";
 import { TabToBeCreated } from "../types";
 import {
   setActiveTabAction,
@@ -12,7 +12,6 @@ import {
   setFilePathOnSaveAction,
   writeFileAction,
   openFileAction,
-  setTabsAction,
   toggleDocumentTypeAction,
   addMultipleTabsAction,
 } from "../context/actions";
@@ -24,46 +23,6 @@ export const MainPage = () => {
     state: { tabs, activeTab },
     dispatch,
   } = useAppContext();
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const draggingItem = useRef<any>();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const dragOverItem = useRef<any>();
-
-  const handleDragStart = (
-    e: React.DragEvent<HTMLElement>,
-    position: number
-  ) => {
-    draggingItem.current = position;
-  };
-
-  const handleDragEnter = (
-    e: React.DragEvent<HTMLButtonElement>,
-    position: number
-  ) => {
-    dragOverItem.current = position;
-  };
-
-  const handleDragEnd = (
-    e: React.DragEvent<HTMLButtonElement>,
-    position: number
-  ) => {
-    const listCopy = [...tabs];
-    const elementDragged = listCopy[position];
-    const draggingItemContent = listCopy[draggingItem.current];
-    listCopy.splice(draggingItem.current, 1);
-    listCopy.splice(dragOverItem.current, 0, draggingItemContent);
-    setTabs(listCopy);
-
-    const newIndex = listCopy.findIndex(
-      (value) => value.content === elementDragged.content
-    );
-    setActiveTabAction(dispatch)(newIndex);
-  };
-
-  const setTabs = (updatedTabs: TabData[]) => {
-    setTabsAction(dispatch)(updatedTabs);
-  };
 
   const handleRemoveTab = (index: number) => {
     removeTabAction(dispatch)(index);
@@ -154,9 +113,6 @@ export const MainPage = () => {
         handleAddTab={handleAddTab}
         handleRemoveTab={handleRemoveTab}
         handleTabsChange={handleTabsChange}
-        handleDragStart={handleDragStart}
-        handleDragEnter={handleDragEnter}
-        handleDragEnd={handleDragEnd}
         handleToggleDocumentType={handleToggleDocumentType}
         handleAddMultipleTabs={handleAddMultipleTabs}
       />
