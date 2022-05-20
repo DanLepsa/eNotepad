@@ -88,3 +88,17 @@ export const readMultipleFiles = async (
     console.log("error", err);
   }
 };
+
+export const getNextTabId = (tabs: TabData[]) => {
+  if (!tabs.length) {
+    return 0;
+  }
+
+  const currentMaxTabId = tabs.reduce(
+    (topValue, currentValue) =>
+      topValue > currentValue.tabId ? topValue : currentValue.tabId,
+    tabs[0].tabId
+  );
+
+  return currentMaxTabId + 1;
+};

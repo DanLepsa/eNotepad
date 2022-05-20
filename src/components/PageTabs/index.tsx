@@ -1,14 +1,16 @@
-import { Tabs, TabList, Tab, TabPanels, TabPanel } from "@chakra-ui/tabs";
-import { DotFillIcon, LogIcon, PlusIcon, XIcon } from "@primer/octicons-react";
+import { Tabs, TabList, TabPanels, TabPanel } from "@chakra-ui/tabs";
+import { LogIcon, PlusIcon } from "@primer/octicons-react";
 import React, { useRef } from "react";
+import { useDrop } from "react-dnd";
 
-import { TabData } from "../../context/state";
+import { TabData, useAppContext, changeTabOrderAction } from "../../context";
 import { TextareaDocument } from "../TextareaDocument";
 import { DocumentTypes, TabToBeCreated } from "../../types";
 
 import styles from "./styles.module.scss";
 import { EngineDocument } from "../EngineDocument";
-import { readMultipleFiles } from "../..//utils";
+import { readMultipleFiles } from "../../utils";
+import { CustomTab } from "./CustomTab";
 
 const { ipcRenderer } = window.require("electron");
 
@@ -18,15 +20,7 @@ export interface PageTabsProps {
   handleAddTab: () => void;
   handleRemoveTab: (index: number) => void;
   handleTabsChange: (index: number) => void;
-  handleDragStart: (
-    e: React.DragEvent<HTMLButtonElement>,
-    index: number
-  ) => void;
-  handleDragEnter: (
-    e: React.DragEvent<HTMLButtonElement>,
-    index: number
-  ) => void;
-  handleDragEnd: (e: React.DragEvent<HTMLButtonElement>, index: number) => void;
+
   handleToggleDocumentType: (index: number) => void;
   handleAddMultipleTabs: (tabs: TabToBeCreated[]) => void;
 }
@@ -37,12 +31,12 @@ export const PageTabs = ({
   handleAddTab,
   handleRemoveTab,
   handleTabsChange,
-  handleDragStart,
-  handleDragEnter,
-  handleDragEnd,
+
   handleToggleDocumentType,
   handleAddMultipleTabs,
 }: PageTabsProps) => {
+  const { dispatch } = useAppContext();
+
   const tabListRef = useRef<HTMLElement>();
 
   const removeTab = (index: number, isDirty: boolean) => async () => {
@@ -51,14 +45,6 @@ export const PageTabs = ({
     } else {
       handleRemoveTab(index);
     }
-  };
-
-  const handleOnClickTab = (e: React.MouseEvent<HTMLElement>) => {
-    (e.target as HTMLElement).scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-      inline: "center",
-    });
   };
 
   const handleOnWheel = (e: React.WheelEvent<HTMLElement>) => {
@@ -83,14 +69,31 @@ export const PageTabs = ({
     }
   };
 
-  const handleOnMouseDown =
-    (index: number, isTabDirty: boolean) => (e: React.MouseEvent) => {
-      if (e.button === 1) {
-        e.preventDefault();
-        e.stopPropagation();
-        removeTab(index, isTabDirty)();
-      }
-    };
+  const changeTabOrder = (id: number, to: number) => {
+    changeTabOrderAction(dispatch)(id, to);
+  };
+
+  const moveTab = React.useCallback(
+    (id: number, atIndex: number) => {
+      const { tab, tabId } = findTab(id);
+
+      changeTabOrder(tabId, atIndex);
+    },
+    [changeTabOrder, data, changeTabOrder]
+  );
+
+  const findTab = React.useCallback(
+    (id: number) => {
+      const tab = data.filter((t) => t.tabId === id)[0];
+      return {
+        tab,
+        tabId: data.indexOf(tab),
+      };
+    },
+    [data]
+  );
+
+  const [, drop] = useDrop(() => ({ accept: typeof HTMLElement }));
 
   return (
     <Tabs
@@ -113,65 +116,42 @@ export const PageTabs = ({
           },
         }}
       >
-        {data.map((tab, index) => (
-          <div key={index} className={styles.tabWrapper}>
-            <Tab
-              flexShrink={0}
+        <div ref={drop} style={{ display: "flex" }}>
+          {data.map((tab, index) => (
+            <CustomTab
               key={index}
-              draggable={true}
-              onClick={handleOnClickTab}
-              onDragStart={(e) => handleDragStart(e, index)}
-              onDragOver={(e) => e.preventDefault()}
-              onDragEnter={(e) => handleDragEnter(e, index)}
-              onDragEnd={(e) => handleDragEnd(e, index)}
-              onMouseDown={handleOnMouseDown(index, tab.isDirty)}
-              className="tab"
-              color={"#d9d9d9"}
-              background={"#787575"}
-              _selected={{
-                color: "#fff",
-                bg: "#272822",
-              }}
-              style={{
-                borderRadius: "4px 4px 0px 0px",
-                marginRight: "2px",
-                borderColor: "#272822",
-                boxShadow: "none",
-                paddingRight: "40px",
-                width: "100%",
-              }}
-            >
-              <span>{tab.label}</span>
-            </Tab>
-            <div
-              onClick={removeTab(index, tab.isDirty)}
-              className={styles.removeTabButton}
-              style={{ color: activeTab === index ? "#fff" : "#d9d9d9" }}
-            >
-              {tab.isDirty ? <DotFillIcon size={16} /> : <XIcon size={16} />}
-            </div>
-          </div>
-        ))}
+              id={tab.tabId}
+              tab={tab}
+              activeTab={activeTab}
+              findTab={findTab}
+              changeTabOrder={moveTab}
+              removeTab={removeTab}
+            />
+          ))}
 
-        <div className={styles.addTabContainer}>
-          <div onClick={handleAddTab} className={styles.addTabButton}>
-            <PlusIcon size={16} />
+          <div className={styles.addTabContainer}>
+            <div onClick={handleAddTab} className={styles.addTabButton}>
+              <PlusIcon size={16} />
+            </div>
           </div>
         </div>
       </TabList>
       <TabPanels>
-        {data.map((tab, index) => (
-          <TabPanel key={index} padding={0} className={styles.tabPanel}>
+        {data.map((tab) => (
+          <TabPanel key={tab.tabId} padding={0} className={styles.tabPanel}>
             <div className={styles.tabContent} onDrop={handleOnDropFile}>
               {tab.documentType === DocumentTypes.ENGINE ? (
-                <EngineDocument documentId={index} content={tab.content} />
+                <EngineDocument documentId={tab.tabId} content={tab.content} />
               ) : (
-                <TextareaDocument documentId={index} content={tab.content} />
+                <TextareaDocument
+                  documentId={tab.tabId}
+                  content={tab.content}
+                />
               )}
             </div>
             <div className={styles.tabFooter}>
               <div
-                onClick={toggleDocumentType(index)}
+                onClick={toggleDocumentType(tab.tabId)}
                 className={styles.toggleDocumentType}
                 style={{
                   color:

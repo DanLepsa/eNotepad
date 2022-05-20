@@ -9,6 +9,7 @@ export enum SaveState {
 }
 
 export interface TabData {
+  tabId: number;
   label: string;
   content: string;
   filePath: string | null;
