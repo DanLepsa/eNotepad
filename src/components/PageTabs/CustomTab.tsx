@@ -5,6 +5,7 @@ import styles from "./styles.module.scss";
 import { TabData } from "../../context";
 import { DotFillIcon, XIcon } from "@primer/octicons-react";
 import { useDrop, useDrag, DragPreviewImage } from "react-dnd";
+import { ItemTypes } from "../../types";
 
 export interface CustomTabProps {
   id: number;
@@ -47,7 +48,7 @@ export const CustomTab = ({
 
   const [{ isDragging }, drag, preview] = useDrag(
     () => ({
-      type: typeof HTMLElement,
+      type: ItemTypes.TAB,
       item: { id, originalIndex },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
@@ -65,8 +66,8 @@ export const CustomTab = ({
 
   const [, drop] = useDrop(
     () => ({
-      accept: typeof HTMLElement,
-      hover({ id: draggedId }: any) {
+      accept: ItemTypes.TAB,
+      hover({ id: draggedId }: { id: number }) {
         if (draggedId !== id) {
           const { tabId: overIndex } = findTab(id);
           changeTabOrder(draggedId, overIndex);

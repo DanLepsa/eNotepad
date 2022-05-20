@@ -5,7 +5,7 @@ import { useDrop } from "react-dnd";
 
 import { TabData, useAppContext, changeTabOrderAction } from "../../context";
 import { TextareaDocument } from "../TextareaDocument";
-import { DocumentTypes, TabToBeCreated } from "../../types";
+import { DocumentTypes, ItemTypes, TabToBeCreated } from "../../types";
 
 import styles from "./styles.module.scss";
 import { EngineDocument } from "../EngineDocument";
@@ -20,7 +20,6 @@ export interface PageTabsProps {
   handleAddTab: () => void;
   handleRemoveTab: (index: number) => void;
   handleTabsChange: (index: number) => void;
-
   handleToggleDocumentType: (index: number) => void;
   handleAddMultipleTabs: (tabs: TabToBeCreated[]) => void;
 }
@@ -31,7 +30,6 @@ export const PageTabs = ({
   handleAddTab,
   handleRemoveTab,
   handleTabsChange,
-
   handleToggleDocumentType,
   handleAddMultipleTabs,
 }: PageTabsProps) => {
@@ -93,7 +91,7 @@ export const PageTabs = ({
     [data]
   );
 
-  const [, drop] = useDrop(() => ({ accept: typeof HTMLElement }));
+  const [, drop] = useDrop(() => ({ accept: ItemTypes.TAB }));
 
   return (
     <Tabs
