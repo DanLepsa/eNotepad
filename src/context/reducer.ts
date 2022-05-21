@@ -72,8 +72,7 @@ export const reducer = (state: AppState, action: Action) => {
       const content: string = action.payload.content;
       return {
         ...state,
-        tabs: state.tabs.map((tab, index) => {
-          // if (index === tabIndex) {
+        tabs: state.tabs.map((tab) => {
           if (tab.tabId === tabIndex) {
             return {
               ...tab,
@@ -151,7 +150,7 @@ export const reducer = (state: AppState, action: Action) => {
     case ActionTypes.TOGGLE_DOCUMENT_TYPE: {
       return {
         ...state,
-        tabs: state.tabs.map((tab, index) => {
+        tabs: state.tabs.map((tab) => {
           if (tab.tabId === action.payload) {
             return {
               ...tab,

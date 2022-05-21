@@ -57,7 +57,7 @@ export const CustomTab = ({
         const { id: droppedId, originalIndex } = item;
         const didDrop = monitor.didDrop();
         if (!didDrop) {
-          changeTabOrder(droppedId, originalIndex);
+          // changeTabOrder(droppedId, originalIndex); //in my case this just seems to be glitchy, not really needed
         }
       },
     }),
