@@ -10,7 +10,7 @@ html {
 
 ::-webkit-scrollbar {
   width: 6px;
-  height: 0px; /* fix horizontal scrollbar messing line numbering*/
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
