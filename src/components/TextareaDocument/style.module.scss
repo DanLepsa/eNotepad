@@ -23,6 +23,7 @@
   display: flex;
   border-color: transparent;
   overflow-y: hidden;
+  overflow-x: hidden;
   text-align: right;
   box-shadow: none;
   color: #707070;
@@ -32,7 +33,7 @@
   background-color: #3e3d32;
   color: #928869;
   font-family: monospace;
-  padding: 3px 5px 3px 0;
+  padding: 3px 5px 8px 0;
 }
 
 .codeEditor {

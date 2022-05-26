@@ -71,15 +71,6 @@ export const PageTabs = ({
     changeTabOrderAction(dispatch)(id, to);
   };
 
-  const moveTab = React.useCallback(
-    (id: number, atIndex: number) => {
-      const { tab, tabId } = findTab(id);
-
-      changeTabOrder(tabId, atIndex);
-    },
-    [changeTabOrder, data, changeTabOrder]
-  );
-
   const findTab = React.useCallback(
     (id: number) => {
       const tab = data.filter((t) => t.tabId === id)[0];
@@ -89,6 +80,15 @@ export const PageTabs = ({
       };
     },
     [data]
+  );
+
+  const moveTab = React.useCallback(
+    (id: number, atIndex: number) => {
+      const { tab, tabId } = findTab(id);
+
+      changeTabOrder(tabId, atIndex);
+    },
+    [changeTabOrder, data, findTab]
   );
 
   const [, drop] = useDrop(() => ({ accept: ItemTypes.TAB }));
